@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script>
+            function sendPost() {
+                var name = document.getElementById("txtName").value;
+                var age = document.getElementById("txtAge").value;
+                var formData = {
+                    "Persons": [
+                        {
+                            "name": name,
+                            "age": age
+                        }
+                    ]
+                };
+                var xml = new XMLHttpRequest();
+                xml.open('POST', 'http://localhost:8080', true);
+                xml.setRequestHeader('Content-type', 'application/json; charset=UTF-8');
+                xml.onreadystatechange = function () {
+                    Console.log("Changes");
+                    if (xml.readyState === 4) {
+                        if (xml.status === 200) {
+                            alert("Status: " + xml.statusText + "\n" + "Response:" + xml.responseText);
+                        } else {
+                            alert(" An error has occurred: " + xml.status + "\n"
+                                    + "Status : " + xml.statusText + "\n"
+                                    + "Ready State : " + xml.readyState + "\n"
+                                    + "Method : " + xml.METHODS);
+                        }
+                    }
+                };
+                xml.send(null);
+                xml.send(JSON.stringify(formData));
+
+            }
+
+        </script>
+    </head>
+    <body>
+        <div><form method="get" action="http://localhost:8080">
+                Name: <input type="text" name="name" />
+                <input type="submit" value="Submit" />
+            </form></div>
+
+        <div id="dv"><h1>Post Method</h1>
+            Name:<input type="text" id="txtName" value="Tu" /><br>
+            Age : <input type="text" id="txtAge" value="20"/><br>
+            <button onclick="sendPost()" value="Send Post">Send Post</button></div>
+    </body>
+</html>
