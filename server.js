@@ -77,12 +77,12 @@ app.post('/webhook', function (request, response) {
                         }
                         speech += "What kind of " + jsBody.result.parameters.Type.toString().toLowerCase() + " want?";
                         var text = speech;
-                        speech = "Here's your menu.";
+//                        speech = "Here's your menu.";
                         var content = {'speech': speech,
                             'displayText': text,
                             'data': row,
                             'contextOut': [
-                                {'name': "orderReceived", 'lifespan': 1
+                                {'name': "menuWatched", 'lifespan': 1
                                 }
                             ], 'source': "Thien Tu", 'followupEvent': {
                             }
@@ -98,9 +98,16 @@ app.post('/webhook', function (request, response) {
 
                 }
             });
-
         }
+    }
+    if (jsBody.result.action.toString().toUpperCase() === "finish".toString().toUpperCase()) {
+        db.many(SELECT_ALL_DETAIL_QUERY).then(function (row) {
+            for (var product in row) {
+                if (product.name.toString().include()) {
 
+                }
+            }
+        });
     }
 });
 //---------------------Handle get request --------------------------
