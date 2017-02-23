@@ -28,21 +28,21 @@ var option = {
 var pgPromise = require('pg-promise')(option);
 var app = express();
 //-------------Connection Config For OnlineDB------------------------
-/* 
- var conConfig = {
- host: '',
- port: 5432,
- database: '',
- user: '',
- password: '',
- ssl: true,
- poolSize: 25
- };
- var db=pgPromise(conConfig);
- */
+
+var conConfig = {
+    host: 'ec2-54-221-212-48.compute-1.amazonaws.com',
+    port: 5432,
+    database: 'd2rqhf4m32ahvq',
+    user: 'dxyktuemezuqst',
+    password: '386c0dd6f8ecae8f0c07da179000368ad5797e91a929c978edbd7b308b6963a4',
+    ssl: true,
+    poolSize: 25
+};
+var db = pgPromise(conConfig);
+
 //-------------Connection Config For Offline DB------------------------
-var conString = "postgres://postgres:tu3816329@localhost:5432" + "/CoffeeShop";
-var db = pgPromise(conString);
+//var conString = "postgres://postgres:tu3816329@localhost:5432" + "/CoffeeShop";
+//var db = pgPromise(conString);
 //------------------------------------------------------------------
 module.exports = db;
 module.exports = pgPromise;
@@ -75,11 +75,16 @@ app.post('/webhook', function (request, response) {
                                 speech += row[i].name + " \\n";
                             }
                         }
+                        speech += "What kind of " + jsBody.result.parameters.Type.toString().toLowerCase() + " want?";
                         var text = speech;
+                        speech = "Here's your menu.";
                         var content = {'speech': speech,
                             'displayText': text,
                             'data': row,
-                            'contextOut': [], 'source': "Thien Tu", 'followupEvent': {
+                            'contextOut': [
+                                {"name": "orderReceived", "lifespain": 1
+                                }
+                            ], 'source': "Thien Tu", 'followupEvent': {
                             }
                         };
                         response.write(JSON.stringify(content));
