@@ -82,7 +82,7 @@ app.post('/webhook', function (request, response) {
                             'displayText': text,
                             'data': row,
                             'contextOut': [
-                                {"name": "orderReceived", "lifespain": 1
+                                {'name': "orderReceived", 'lifespain': 1
                                 }
                             ], 'source': "Thien Tu", 'followupEvent': {
                             }
