@@ -73,7 +73,7 @@ var date = new Date();
         var seconds = date.getSeconds();
         console.log(hours + ":" + minute + ":" + seconds + (date.getHours() <= 12 ? " AM" : " PM"));
         return hours + ":" + minute + ":" + seconds + (date.getHours() <= 12 ? " AM" : " PM");
-        }
+}
 //------------------Handle Post Request--------------------------------------
 app.post('/webhook', function (request, response) {
 //    console.log(request.body);
@@ -94,9 +94,9 @@ console.log("row:" + row);
         for (var i = 0; i < row.length; i++) {
 if (i == (row[i].length - 1)) {
 speech += "And " + row.name + " \\n";
-} else {
+        } else {
 speech += row[i].name + " \\n";
-}
+        }
 }
 speech += "What kind of " + jsBody.result.parameters.Type.toString().toLowerCase() + " want?";
         var text = speech;
@@ -113,12 +113,12 @@ speech += "What kind of " + jsBody.result.parameters.Type.toString().toLowerCase
         response.write(JSON.stringify(content));
         console.log("Send response: " + JSON.stringify(content));
         response.end();
-}).catch(function (error) {
+        }).catch(function (error) {
 if (error)throw error;
-}); } else {
+        }); } else {
 }
 });
-}
+        }
 }
 if (jsBody.result.action.toString().toUpperCase() === "finish".toString().toUpperCase()) {
 db.many(SELECT_ALL_DETAIL_QUERY).then(function (row) {
@@ -128,47 +128,56 @@ if (product.name.toString().include()) {
 }
 }
 });
-}
+        }
 if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpperCase()) {
 
 }
 });
 //---------------------Handle get request --------------------------
         app.get('/', function (request, response) {
+
         console.log("Connecting to DB.........");
-                db.tx(function(t){
-                var queries = [t.none("Insert into tbl_Receipt(date,time) VALUES ('2/28/2017','3:50:10 PM')"),
-                        t.none("Insert into tbl_Receipt(date,time) VALUES ('2/27/2017','12:50:10 AM');"),
-                        t.none("Insert into tbl_ReceiptProduct VALUES(1,2,3)"),
-                        t.none("Insert into tbl_ReceiptProduct VALUES(1,1,3)"),
-                        t.none("Insert into tbl_ReceiptProduct VALUES(1,6,10);")
-                ];
-                        return t.batch(queries);
-                }).then(function(data){console.log(data)}).catch(function(error){
-        console.log(error);
-        });
-                db.many(SELECT_RECEIPT_BY_ID_QUERY, 1).then(function (rows){
-        response.writeHeader(200, {'Content-type': "text/html"});
-                response.write("<h1>Receipt No." + rows[0].receipt_id + "</h1>");
-                response.write("<h2>" + rows[0].time + "_" + rows[0].date + "</h1>");
-                response.write("<table>");
-                response.write("<tr>");
-                response.write("<th>Name</th>");
-                response.write("<th>Amount</th>");
-                response.write("<th>Price</th>");
-                response.write("</tr>");
-                var total = 0;
-                for (row in rows){
-        response.write("<tr>");
-                response.write("<td>" + row.name + "</td>");
-                response.write("<td>" + row.amount + "</td>");
-                response.write("<td>" + row.price + "</td>");
-                response.write("</tr>");
-                total += row.amount * row.price;
-        }
-        response.write("<h2>Total" + total + "</h1>");
-                response.write("</table>");
-        }).catch(function (error){
+                /*
+                 db.tx(function(t){
+                 var queries = [t.none("Insert into tbl_Receipt(date,time) VALUES ('2/28/2017','3:50:10 PM')"),
+                 t.none("Insert into tbl_Receipt(date,time) VALUES ('2/27/2017','12:50:10 AM');"),
+                 t.none("Insert into tbl_ReceiptProduct VALUES(1,2,3)"),
+                 t.none("Insert into tbl_ReceiptProduct VALUES(1,1,3)"),
+                 t.none("Insert into tbl_ReceiptProduct VALUES(1,6,10);")
+                 ];
+                 return t.batch(queries);
+                 }).then(function(data){console.log(data)}).catch(function(error){
+                 console.log(error);
+                 });
+                 db.many(SELECT_RECEIPT_BY_ID_QUERY, 1).then(function (rows){
+                 response.writeHeader(200, {'Content-type': "text/html"});
+                 response.write("<h1>Receipt No." + rows[0].receipt_id + "</h1>");
+                 response.write("<h2>" + rows[0].time + "_" + rows[0].date + "</h1>");
+                 response.write("<table>");
+                 response.write("<tr>");
+                 response.write("<th>Name</th>");
+                 response.write("<th>Amount</th>");
+                 response.write("<th>Price</th>");
+                 response.write("</tr>");
+                 var total = 0;
+                 for (var row in rows){
+                 response.write("<tr>");
+                 response.write("<td>" + row.name + "</td>");
+                 response.write("<td>" + row.amount + "</td>");
+                 response.write("<td>" + row.price + "</td>");
+                 response.write("</tr>");
+                 total += row.amount * row.price;
+                 }
+                 response.write("<h2>Total" + total + "</h1>");
+                 response.write("</table>");
+                 }).catch(function (error){
+                 console.log(error);
+                 });
+                 */
+                db.many("SELECT table_schema,table_name FROM information_schema.tables ORDER BY table_schema,table_name").then(function (data){
+        for (var row in data){
+        console.log(row.table_name); }
+        }.catch(function (error){
         console.log(error);
         });
                 /*Create Table
@@ -206,56 +215,56 @@ if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpper
 //    });
         });
 //----------------------Post Server----------------------------------
-        var server = app.listen(process.env.PORT || 8080, function () {
-        console.log('listening on ' + server.address().port);
-        });
+                var server = app.listen(process.env.PORT || 8080, function () {
+                console.log('listening on ' + server.address().port);
+                });
 //------------------PG code---------------------------------------------
-        /*
-         var client = pg.Client(conString);
-         pg.defaults.ssl = true;
-         pg.defaults.poolSize = 25;
-         pg.connect(conString, function (error, client) {
-         if (error)
-         throw error;
-         var query = client.query('Select * From tbl_Drinks;');
-         query.on('row', function (row) {
-         content += JSON.stringify(row).toLocaleString() + "/n";
-         console.log(JSON.stringify(row));
-         });
-         query.on('end', function () {
-         console.log("Client was disconnected.");
-         client.end();
-         });
-         });
-         app.get('/', function (request, response) {
-         console.log("GET");
-         response.writeHeader(200, {'Content-Type': 'Text/Html'});
-         var content = "";
-         var ul = url.parse(request.url, true).query;
-         content += "<h1>Your name is " + ul.name + "</h1>";
-         response.write(content);
-         response.end();
-         });
-         var server = http.createServer(function (request, response) {
-         if (request.method === "GET") {
-         console.log("GET");
-         response.writeHeader(200, {'Content-Type': 'Text/Html'});
-         var content = "";
-         var ul = url.parse(request.url, true).query;
-         content += "<h1>Your name is " + ul.name + "</h1>";
-         response.write(content);
-         response.end();
-         } else if (request.method === "POST") {
-         response.writeHeader(200, {'Content-type': "Application/json"});      
-         var content = {'speech': 'Please wait a moment for your order.', 'displayText': 'Please wait a moment for your order.We are making it!', 'data': {}, 'contextOut': [], 'source': "Thien Tu"};
-         response.write(JSON.stringify(content));
-         console.log("Send response: " + JSON.stringify(content));
-         response.end();
-         console.log("POST");
-         }
-         }).listen(process.env.PORT || 8080, function () {
-         console.log('listening on ' + server.address().port);
-         });
-         
-         */
+                /*
+                 var client = pg.Client(conString);
+                 pg.defaults.ssl = true;
+                 pg.defaults.poolSize = 25;
+                 pg.connect(conString, function (error, client) {
+                 if (error)
+                 throw error;
+                 var query = client.query('Select * From tbl_Drinks;');
+                 query.on('row', function (row) {
+                 content += JSON.stringify(row).toLocaleString() + "/n";
+                 console.log(JSON.stringify(row));
+                 });
+                 query.on('end', function () {
+                 console.log("Client was disconnected.");
+                 client.end();
+                 });
+                 });
+                 app.get('/', function (request, response) {
+                 console.log("GET");
+                 response.writeHeader(200, {'Content-Type': 'Text/Html'});
+                 var content = "";
+                 var ul = url.parse(request.url, true).query;
+                 content += "<h1>Your name is " + ul.name + "</h1>";
+                 response.write(content);
+                 response.end();
+                 });
+                 var server = http.createServer(function (request, response) {
+                 if (request.method === "GET") {
+                 console.log("GET");
+                 response.writeHeader(200, {'Content-Type': 'Text/Html'});
+                 var content = "";
+                 var ul = url.parse(request.url, true).query;
+                 content += "<h1>Your name is " + ul.name + "</h1>";
+                 response.write(content);
+                 response.end();
+                 } else if (request.method === "POST") {
+                 response.writeHeader(200, {'Content-type': "Application/json"});      
+                 var content = {'speech': 'Please wait a moment for your order.', 'displayText': 'Please wait a moment for your order.We are making it!', 'data': {}, 'contextOut': [], 'source': "Thien Tu"};
+                 response.write(JSON.stringify(content));
+                 console.log("Send response: " + JSON.stringify(content));
+                 response.end();
+                 console.log("POST");
+                 }
+                 }).listen(process.env.PORT || 8080, function () {
+                 console.log('listening on ' + server.address().port);
+                 });
+                 
+                 */
 
