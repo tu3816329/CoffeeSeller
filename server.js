@@ -73,7 +73,7 @@ var date = new Date();
         var seconds = date.getSeconds();
         console.log(hours + ":" + minute + ":" + seconds + (date.getHours() <= 12 ? " AM" : " PM"));
         return hours + ":" + minute + ":" + seconds + (date.getHours() <= 12 ? " AM" : " PM");
-}
+        }
 //------------------Handle Post Request--------------------------------------
 app.post('/webhook', function (request, response) {
 //    console.log(request.body);
@@ -94,9 +94,9 @@ console.log("row:" + row);
         for (var i = 0; i < row.length; i++) {
 if (i == (row[i].length - 1)) {
 speech += "And " + row.name + " \\n";
-        } else {
+} else {
 speech += row[i].name + " \\n";
-        }
+}
 }
 speech += "What kind of " + jsBody.result.parameters.Type.toString().toLowerCase() + " want?";
         var text = speech;
@@ -113,12 +113,12 @@ speech += "What kind of " + jsBody.result.parameters.Type.toString().toLowerCase
         response.write(JSON.stringify(content));
         console.log("Send response: " + JSON.stringify(content));
         response.end();
-        }).catch(function (error) {
+}).catch(function (error) {
 if (error)throw error;
-        }); } else {
+}); } else {
 }
 });
-        }
+}
 }
 if (jsBody.result.action.toString().toUpperCase() === "finish".toString().toUpperCase()) {
 db.many(SELECT_ALL_DETAIL_QUERY).then(function (row) {
@@ -128,7 +128,7 @@ if (product.name.toString().include()) {
 }
 }
 });
-        }
+}
 if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpperCase()) {
 
 }
@@ -174,32 +174,32 @@ if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpper
                  console.log(error);
                  });
                  */
-                /*
+//                /*
                  db.many("SELECT table_schema,table_name FROM information_schema.tables ORDER BY table_schema,table_name").then(function (data){
                  for (var row in data){
                  console.log(row.table_name); }
                  }).catch(function (error){
                  console.log(error);
                  });
-                 */
-//                /*
-//                 ---------------Create Table
-                var content = "";
-                db.tx(function (t) {
-                var queries = [
-                        t.none('Drop Table IF EXISTS tbl_Receipt'),
-                        t.none('Drop sequence IF EXISTs tbl_Receipt_id_seq'),
-                        t.none('Create sequence tbl_Receipt_id_seq'),
-                        t.none("create table tbl_Receipt(ID integer NOT NULL DEFAULT nextval('tbl_Receipt_id_seq'::regclass),date date NOT NULL,time time NOT NULL,PRIMARY KEY(ID))"),
-                        t.none('ALTER TABLE public.tbl_Receipt OWNER TO dxyktuemezuqst; GRANT ALL ON TABLE public.tbl_Receipt TO public; GRANT ALL ON TABLE public.tbl_Receipt TO dxyktuemezuqst;'),
-                        t.none("drop table IF EXISTs tbl_ReceiptProduct"),
-                        t.none("create table tbl_ReceiptProduct(receiptID integer NOT NULL ,productID integer NOT NULL,amount integer not null)"),
-                ];
-                        return t.batch(queries);
-                }).then(function(data){console.log(data)}).catch(function(error){
-        console.log(error);
-        });
 //                 */
+                /*
+                 //                 ---------------Create Table
+                 var content = "";
+                 db.tx(function (t) {
+                 var queries = [
+                 t.none('Drop Table IF EXISTS tbl_Receipt'),
+                 t.none('Drop sequence IF EXISTs tbl_Receipt_id_seq'),
+                 t.none('Create sequence tbl_Receipt_id_seq'),
+                 t.none("create table tbl_Receipt(ID integer NOT NULL DEFAULT nextval('tbl_Receipt_id_seq'::regclass),date date NOT NULL,time time NOT NULL,PRIMARY KEY(ID))"),
+                 t.none('ALTER TABLE public.tbl_Receipt OWNER TO dxyktuemezuqst; GRANT ALL ON TABLE public.tbl_Receipt TO public; GRANT ALL ON TABLE public.tbl_Receipt TO dxyktuemezuqst;'),
+                 t.none("drop table IF EXISTs tbl_ReceiptProduct"),
+                 t.none("create table tbl_ReceiptProduct(receiptID integer NOT NULL ,productID integer NOT NULL,amount integer not null)"),
+                 ];
+                 return t.batch(queries);
+                 }).then(function(data){console.log(data)}).catch(function(error){
+                 console.log(error);
+                 });
+                 */
 //    db.many(SELECT_ALL_DETAIL_QUERY).then(function (row) {
 //        var productType = [];
 //        for (var i = 0; i < row.length; i++) {
