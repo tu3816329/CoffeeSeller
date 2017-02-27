@@ -177,7 +177,7 @@ if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpper
                 db.many("SELECT table_schema,table_name FROM information_schema.tables ORDER BY table_schema,table_name").then(function (data){
         for (var row in data){
         console.log(row.table_name); }
-        }.catch(function (error){
+        }).catch(function (error){
         console.log(error);
         });
                 /*Create Table
