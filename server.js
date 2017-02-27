@@ -74,10 +74,6 @@ var date = new Date();
         console.log(hours + ":" + minute + ":" + seconds + (date.getHours() <= 12 ? " AM" : " PM"));
         return hours + ":" + minute + ":" + seconds + (date.getHours() <= 12 ? " AM" : " PM");
         }
-//getCurrentDate();
-//getCurrentTime();
-
-
 //------------------Handle Post Request--------------------------------------
 app.post('/webhook', function (request, response) {
 //    console.log(request.body);
@@ -118,11 +114,8 @@ speech += "What kind of " + jsBody.result.parameters.Type.toString().toLowerCase
         console.log("Send response: " + JSON.stringify(content));
         response.end();
 }).catch(function (error) {
-if (error)
-        throw error;
-});
-} else {
-
+if (error)throw error;
+}); } else {
 }
 });
 }
@@ -139,26 +132,63 @@ if (product.name.toString().include()) {
 if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpperCase()) {
 
 }
-
 });
 //---------------------Handle get request --------------------------
         app.get('/', function (request, response) {
         console.log("Connecting to DB.........");
-                var content = "";
-                db.tx(function (t) {
-                var queries = [
-                        t.none('Drop Table IF EXISTS tbl_Receipt'),
-                        t.none('Drop sequence IF EXISTs tbl_Receipt_id_seq'),
-                        t.none('Create sequence tbl_Receipt_id_seq'),
-                        t.none("create table tbl_Receipt(ID integer NOT NULL DEFAULT nextval('tbl_Receipt_id_seq'::regclass),date date NOT NULL,time time NOT NULL,PRIMARY KEY(ID))"),
-                        t.none('ALTER TABLE public.tbl_Receipt OWNER TO dxyktuemezuqst; GRANT ALL ON TABLE public.tbl_Receipt TO public; GRANT ALL ON TABLE public.tbl_Receipt TO dxyktuemezuqst;'),
-                        t.none("drop table IF EXISTs tbl_ReceiptProduct"),
-                        t.none("create table tbl_ReceiptProduct(receiptID integer NOT NULL ,productID integer NOT NULL,amount integer not null)"),
+                db.tx(function(t){
+                var queries = [t.none("Insert into tbl_Receipt(date,time) VALUES ('2/28/2017','3:50:10 PM')"),
+                        t.none("Insert into tbl_Receipt(date,time) VALUES ('2/27/2017','12:50:10 AM');"),
+                        t.none("Insert into tbl_ReceiptProduct VALUES(1,2,3)"),
+                        t.none("Insert into tbl_ReceiptProduct VALUES(1,1,3)"),
+                        t.none("Insert into tbl_ReceiptProduct VALUES(1,6,10);")
                 ];
                         return t.batch(queries);
                 }).then(function(data){console.log(data)}).catch(function(error){
         console.log(error);
-        }); ;
+        });
+                db.many(SELECT_RECEIPT_BY_ID_QUERY, 1).then(function (rows){
+        response.writeHeader(200, {'Content-type': "text/html"});
+                response.write("<h1>Receipt No." + rows[0].receipt_id + "</h1>");
+                response.write("<h2>" + rows[0].time + "_" + rows[0].date + "</h1>");
+                response.write("<table>");
+                response.write("<tr>");
+                response.write("<th>Name</th>");
+                response.write("<th>Amount</th>");
+                response.write("<th>Price</th>");
+                response.write("</tr>");
+                var total = 0;
+                for (row in rows){
+        response.write("<tr>");
+                response.write("<td>" + row.name + "</td>");
+                response.write("<td>" + row.amount + "</td>");
+                response.write("<td>" + row.price + "</td>");
+                response.write("</tr>");
+                total += row.amount * row.price;
+        }
+        response.write("<h2>Total" + total + "</h1>");
+                response.write("</table>");
+        }).catch(function (error){
+        console.log(error);
+        });
+                /*Create Table
+                 var content = "";
+                 db.tx(function (t) {
+                 var queries = [
+                 t.none('Drop Table IF EXISTS tbl_Receipt'),
+                 t.none('Drop sequence IF EXISTs tbl_Receipt_id_seq'),
+                 t.none('Create sequence tbl_Receipt_id_seq'),
+                 t.none("create table tbl_Receipt(ID integer NOT NULL DEFAULT nextval('tbl_Receipt_id_seq'::regclass),date date NOT NULL,time time NOT NULL,PRIMARY KEY(ID))"),
+                 t.none('ALTER TABLE public.tbl_Receipt OWNER TO dxyktuemezuqst; GRANT ALL ON TABLE public.tbl_Receipt TO public; GRANT ALL ON TABLE public.tbl_Receipt TO dxyktuemezuqst;'),
+                 t.none("drop table IF EXISTs tbl_ReceiptProduct"),
+                 t.none("create table tbl_ReceiptProduct(receiptID integer NOT NULL ,productID integer NOT NULL,amount integer not null)"),
+                 ];
+                 return t.batch(queries);
+                 }).then(function(data){console.log(data)}).catch(function(error){
+                 console.log(error);
+                 }); 
+                 
+                 */
 //    db.many(SELECT_ALL_DETAIL_QUERY).then(function (row) {
 //        var productType = [];
 //        for (var i = 0; i < row.length; i++) {
