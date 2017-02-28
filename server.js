@@ -162,12 +162,12 @@ if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpper
                 response.write("<th>Price</th>");
                 response.write("</tr>");
                 var total = 0;
-                for (var row in rows){
+                for (var i=0;i<rows.length;i++){
         response.write("<tr>");
-                response.write("<td>" + row.id + "</td>");
-                response.write("<td>" + row.name + "</td>");
-                response.write("<td>" + row.type_id + "</td>");
-                response.write("<td>" + row.price + "</td>");
+                response.write("<td>" + rows[i].id + "</td>");
+                response.write("<td>" + rows[i].name + "</td>");
+                response.write("<td>" + rows[i].type_id + "</td>");
+                response.write("<td>" + rows[i].price + "</td>");
                 response.write("</tr>");
 //                total += row.amount * row.price;
         }
