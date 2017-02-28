@@ -73,7 +73,7 @@ var date = new Date();
         var seconds = date.getSeconds();
         console.log(hours + ":" + minute + ":" + seconds + (date.getHours() <= 12 ? " AM" : " PM"));
         return hours + ":" + minute + ":" + seconds + (date.getHours() <= 12 ? " AM" : " PM");
-}
+        }
 //------------------Handle Post Request--------------------------------------
 app.post('/webhook', function (request, response) {
 //    console.log(request.body);
@@ -94,9 +94,9 @@ console.log("row:" + row);
         for (var i = 0; i < row.length; i++) {
 if (i == (row[i].length - 1)) {
 speech += "And " + row.name + " \\n";
-        } else {
+} else {
 speech += row[i].name + " \\n";
-        }
+}
 }
 speech += "What kind of " + jsBody.result.parameters.Type.toString().toLowerCase() + " want?";
         var text = speech;
@@ -113,12 +113,12 @@ speech += "What kind of " + jsBody.result.parameters.Type.toString().toLowerCase
         response.write(JSON.stringify(content));
         console.log("Send response: " + JSON.stringify(content));
         response.end();
-        }).catch(function (error) {
+}).catch(function (error) {
 if (error)throw error;
-        }); } else {
+}); } else {
 }
 });
-        }
+}
 }
 if (jsBody.result.action.toString().toUpperCase() === "finish".toString().toUpperCase()) {
 db.many(SELECT_ALL_DETAIL_QUERY).then(function (row) {
@@ -128,7 +128,7 @@ if (product.name.toString().include()) {
 }
 }
 });
-        }
+}
 if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpperCase()) {
 
 }
@@ -154,6 +154,7 @@ if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpper
         response.writeHeader(200, {'Content-type': "text/html"});
 //                response.write("<h1>Receipt No." + rows[0].receipt_id + "</h1>");
 //                response.write("<h2>" + rows[0].time + "_" + rows[0].date + "</h1>");
+                response.write("<meta charset='UTF-8'>");
                 response.write("<table border='1'>");
                 response.write("<tr>");
                 response.write("<th>Id</th>");
@@ -162,7 +163,7 @@ if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpper
                 response.write("<th>Price</th>");
                 response.write("</tr>");
                 var total = 0;
-                for (var i=0;i<rows.length;i++){
+                for (var i = 0; i < rows.length; i++){
         response.write("<tr>");
                 response.write("<td>" + rows[i].id + "</td>");
                 response.write("<td>" + rows[i].name + "</td>");
@@ -172,7 +173,7 @@ if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpper
 //                total += row.amount * row.price;
         }
 //        response.write("<h2>Total" + total + "</h1>");
-                response.write("</table>");
+        response.write("</table>");
         }).catch(function (error){
         console.log(error);
         });
