@@ -150,7 +150,7 @@ if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpper
                  console.log(error);
                  });
                  */
-                /*
+//                /*
                  db.many(SELECT_RECEIPT_BY_ID_QUERY, 1).then(function (rows){
                  response.writeHeader(200, {'Content-type': "text/html"});
                  response.write("<h1>Receipt No." + rows[0].receipt_id + "</h1>");
@@ -183,7 +183,7 @@ if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpper
                  }).catch(function (error){
                  console.log(error);
                  });
-                 */
+//                 */
                 /*
                  //                 ---------------Create Table
                  var content = "";
