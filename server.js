@@ -137,18 +137,18 @@ if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpper
         app.get('/', function (request, response) {
 
         console.log("Connecting to DB.........");
+                db.tx(function(t){
+                var queries = [t.none("Insert into tbl_Receipt(date,time) VALUES ('2/28/2017','3:50:10 PM')"),
+                        t.none("Insert into tbl_Receipt(date,time) VALUES ('2/27/2017','12:50:10 AM');"),
+                        t.none("Insert into tbl_ReceiptProduct VALUES(1,2,3)"),
+                        t.none("Insert into tbl_ReceiptProduct VALUES(1,1,3)"),
+                        t.none("Insert into tbl_ReceiptProduct VALUES(1,6,10);")
+                ];
+                        return t.batch(queries);
+                }).then(function(data){console.log(data)}).catch(function(error){
+        console.log(error);
+        });
                 /*
-                 db.tx(function(t){
-                 var queries = [t.none("Insert into tbl_Receipt(date,time) VALUES ('2/28/2017','3:50:10 PM')"),
-                 t.none("Insert into tbl_Receipt(date,time) VALUES ('2/27/2017','12:50:10 AM');"),
-                 t.none("Insert into tbl_ReceiptProduct VALUES(1,2,3)"),
-                 t.none("Insert into tbl_ReceiptProduct VALUES(1,1,3)"),
-                 t.none("Insert into tbl_ReceiptProduct VALUES(1,6,10);")
-                 ];
-                 return t.batch(queries);
-                 }).then(function(data){console.log(data)}).catch(function(error){
-                 console.log(error);
-                 });
                  db.many(SELECT_RECEIPT_BY_ID_QUERY, 1).then(function (rows){
                  response.writeHeader(200, {'Content-type': "text/html"});
                  response.write("<h1>Receipt No." + rows[0].receipt_id + "</h1>");
@@ -174,14 +174,14 @@ if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpper
                  console.log(error);
                  });
                  */
-//                /*
+                /*
                  db.many("SELECT table_schema,table_name FROM information_schema.tables ORDER BY table_schema,table_name").then(function (data){
                  for (var row in data){
                  console.log(row.table_name); }
                  }).catch(function (error){
                  console.log(error);
                  });
-//                 */
+                 */
                 /*
                  //                 ---------------Create Table
                  var content = "";
