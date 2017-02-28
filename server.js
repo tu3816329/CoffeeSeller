@@ -153,7 +153,7 @@ if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpper
 
 
 
-                db.many(SELECT_RECEIPT_BY_ID_QUERY, {id:2}).then(function (rows){
+                db.many(SELECT_RECEIPT_BY_ID_QUERY, {id:1}).then(function (rows){
         response.writeHeader(200, {'Content-type': "text/html"});
                 response.write("<meta charset='UTF-8'>");
                 response.write("<h1>Receipt No." + rows[0].receipt_id + "</h1>");
