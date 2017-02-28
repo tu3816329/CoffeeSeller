@@ -17,11 +17,11 @@ tbl_ProductType b ON a.product_type_id=b.id";
         var SELECT_BY_PRICE_QUERY = "select b.name as Product,a.name,\n\
 a.Type_Name as type,a.price from tbl_producttype b, ( select \n\
 a.name,a.price,b.name as Type_Name,b.product_type_id from tbl_product \n\
-a inner join tbl_detailproducttype b  ON a.type_id=b.id where a.price=$1 )\n\
+a inner join tbl_detailproducttype b  ON a.type_id=b.id where a.price=${price} )\n\
  a where a.product_type_id=b.id ";
         var SELECT_RECEIPT_BY_ID_QUERY = "Select b.id as Receipt_ID,a.name,a.price,\n\
 c.amount,b.date,b.time from tbl_Product a ,tbl_Receipt b,tbl_ReceiptProduct c\n\
- where c.ReceiptID=b.ID and c.productID=a.ID and c.ReceiptID=$1";
+ where c.ReceiptID=b.ID and c.productID=a.ID and c.ReceiptID=${id}";
         var SELECT_PRODUCT_TYPE_QUERY = "Select * From tbl_ProductType";
         var SELECT_DETAIL_PRODUCT_TYPE_QUERY = "Select name From tbl_DetailProductType";
 //-----------------------------------------------------------------------------
@@ -50,8 +50,8 @@ c.amount,b.date,b.time from tbl_Product a ,tbl_Receipt b,tbl_ReceiptProduct c\n\
         };
         var db = pgPromise(conConfig);
 //-------------Connection Config For Offline DB------------------------
-//var conString = "postgres://postgres:tu3816329@localhost:5432" + "/CoffeeShop";
-//var db = pgPromise(conString);
+        var conString = "postgres://postgres:tu3816329@localhost:5432" + "/CoffeeShop";
+//        var db = pgPromise(conString);
 //------------------------------------------------------------------
         module.exports = db;
         module.exports = pgPromise;
@@ -141,17 +141,43 @@ if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpper
                  db.tx(function(t){
                  var queries = [t.none("Insert into tbl_Receipt(date,time) VALUES ('2/28/2017','3:50:10 PM')"),
                  t.none("Insert into tbl_Receipt(date,time) VALUES ('2/27/2017','12:50:10 AM');"),
-                 t.none("Insert into tbl_ReceiptProduct VALUES(1,2,3)"),
-                 t.none("Insert into tbl_ReceiptProduct VALUES(1,1,3)"),
-                 t.none("Insert into tbl_ReceiptProduct VALUES(1,6,10);")
+                 t.none("Insert into tbl_ReceiptProduct VALUES(2,2,3)"),
+                 t.none("Insert into tbl_ReceiptProduct VALUES(2,1,3)"),
+                 t.none("Insert into tbl_ReceiptProduct VALUES(2,6,10)")
                  ];
                  return t.batch(queries);
                  }).then(function(data){console.log(data)}).catch(function(error){
                  console.log(error);
                  });
                  */
-//                /*
-                 db.many(SELECT_RECEIPT_BY_ID_QUERY, 1).then(function (rows){
+                db.many("select * from tbl_product").then(function (rows){
+        response.writeHeader(200, {'Content-type': "text/html"});
+//                response.write("<h1>Receipt No." + rows[0].receipt_id + "</h1>");
+//                response.write("<h2>" + rows[0].time + "_" + rows[0].date + "</h1>");
+                response.write("<table border='1'>");
+                response.write("<tr>");
+                response.write("<th>Id</th>");
+                response.write("<th>Name</th>");
+                response.write("<th>Type_ID</th>");
+                response.write("<th>Price</th>");
+                response.write("</tr>");
+                var total = 0;
+                for (var row in rows){
+        response.write("<tr>");
+                response.write("<td>" + row.id + "</td>");
+                response.write("<td>" + row.name + "</td>");
+                response.write("<td>" + row.type_id + "</td>");
+                response.write("<td>" + row.price + "</td>");
+                response.write("</tr>");
+//                total += row.amount * row.price;
+        }
+//        response.write("<h2>Total" + total + "</h1>");
+                response.write("</table>");
+        }).catch(function (error){
+        console.log(error);
+        });
+                /*
+                 db.many(SELECT_RECEIPT_BY_ID_QUERY, {id:2}).then(function (rows){
                  response.writeHeader(200, {'Content-type': "text/html"});
                  response.write("<h1>Receipt No." + rows[0].receipt_id + "</h1>");
                  response.write("<h2>" + rows[0].time + "_" + rows[0].date + "</h1>");
@@ -175,7 +201,7 @@ if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpper
                  }).catch(function (error){
                  console.log(error);
                  });
-//                 */
+                 */
                 /*
                  db.many("SELECT table_schema,table_name FROM information_schema.tables ORDER BY table_schema,table_name").then(function (data){
                  for (var row in data){
@@ -183,7 +209,7 @@ if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpper
                  }).catch(function (error){
                  console.log(error);
                  });
-//                 */
+                 //                 */
                 /*
                  //                 ---------------Create Table
                  var content = "";
