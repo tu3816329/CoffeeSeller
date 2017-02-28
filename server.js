@@ -73,7 +73,7 @@ var date = new Date();
         var seconds = date.getSeconds();
         console.log(hours + ":" + minute + ":" + seconds + (date.getHours() <= 12 ? " AM" : " PM"));
         return hours + ":" + minute + ":" + seconds + (date.getHours() <= 12 ? " AM" : " PM");
-        }
+}
 //------------------Handle Post Request--------------------------------------
 app.post('/webhook', function (request, response) {
 //    console.log(request.body);
@@ -94,9 +94,9 @@ console.log("row:" + row);
         for (var i = 0; i < row.length; i++) {
 if (i == (row[i].length - 1)) {
 speech += "And " + row.name + " \\n";
-} else {
+        } else {
 speech += row[i].name + " \\n";
-}
+        }
 }
 speech += "What kind of " + jsBody.result.parameters.Type.toString().toLowerCase() + " want?";
         var text = speech;
@@ -113,12 +113,12 @@ speech += "What kind of " + jsBody.result.parameters.Type.toString().toLowerCase
         response.write(JSON.stringify(content));
         console.log("Send response: " + JSON.stringify(content));
         response.end();
-}).catch(function (error) {
+        }).catch(function (error) {
 if (error)throw error;
-}); } else {
+        }); } else {
 }
 });
-}
+        }
 }
 if (jsBody.result.action.toString().toUpperCase() === "finish".toString().toUpperCase()) {
 db.many(SELECT_ALL_DETAIL_QUERY).then(function (row) {
@@ -128,7 +128,7 @@ if (product.name.toString().include()) {
 }
 }
 });
-}
+        }
 if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpperCase()) {
 
 }
@@ -137,17 +137,19 @@ if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpper
         app.get('/', function (request, response) {
 
         console.log("Connecting to DB.........");
-                db.tx(function(t){
-                var queries = [t.none("Insert into tbl_Receipt(date,time) VALUES ('2/28/2017','3:50:10 PM')"),
-                        t.none("Insert into tbl_Receipt(date,time) VALUES ('2/27/2017','12:50:10 AM');"),
-                        t.none("Insert into tbl_ReceiptProduct VALUES(1,2,3)"),
-                        t.none("Insert into tbl_ReceiptProduct VALUES(1,1,3)"),
-                        t.none("Insert into tbl_ReceiptProduct VALUES(1,6,10);")
-                ];
-                        return t.batch(queries);
-                }).then(function(data){console.log(data)}).catch(function(error){
-        console.log(error);
-        });
+                /*
+                 db.tx(function(t){
+                 var queries = [t.none("Insert into tbl_Receipt(date,time) VALUES ('2/28/2017','3:50:10 PM')"),
+                 t.none("Insert into tbl_Receipt(date,time) VALUES ('2/27/2017','12:50:10 AM');"),
+                 t.none("Insert into tbl_ReceiptProduct VALUES(1,2,3)"),
+                 t.none("Insert into tbl_ReceiptProduct VALUES(1,1,3)"),
+                 t.none("Insert into tbl_ReceiptProduct VALUES(1,6,10);")
+                 ];
+                 return t.batch(queries);
+                 }).then(function(data){console.log(data)}).catch(function(error){
+                 console.log(error);
+                 });
+                 */
                 /*
                  db.many(SELECT_RECEIPT_BY_ID_QUERY, 1).then(function (rows){
                  response.writeHeader(200, {'Content-type': "text/html"});
