@@ -75,67 +75,60 @@ var date = new Date();
         return hours + ":" + minute + ":" + seconds + (date.getHours() <= 12 ? " AM" : " PM");
 }
 //------------------Handle Post Request--------------------------------------
-app.post('/webhook', function (request, response) {
-//    console.log(request.body);
-var jsBody = request.body;
-        response.writeHeader(200, {'Content-type': "Application/json"});
-        var content = "";
-        //----------------------Handle Show Menu Request-------------------------
-        if (jsBody.result.action.toString().toUpperCase() === "show_menu".toString().toUpperCase()) {
-if (jsBody.result.parameters.Type !== "") {
-db.one(SELECT_PRODUCT_TYPE_QUERY + " where name LIKE ${name}", {name: jsBody.result.parameters.Type}).then(function (data) {
-var id = data.id;
-        if (id !== null) {
-db.many(SELECT_DETAIL_PRODUCT_TYPE_QUERY + " where product_type_id=${id} ", {id: id}).then(function (row) {
-
-console.log("row:" + row);
-        var display = "";
-        var speech = "We have \\n";
-        for (var i = 0; i < row.length; i++) {
-if (i == (row[i].length - 1)) {
-speech += "And " + row.name + " \\n";
-        } else {
-speech += row[i].name + " \\n";
+var order = {'product':[], 'table':{}};
+        app.post('/webhook', function (request, response) {
+    console.log("IP:"+request.connection.remoteAddress);
+        var jsBody = request.body;
+                response.writeHeader(200, {'Content-type': "Application/json"});
+                
+                var content = "";
+                //----------------------Handle Show Menu Request-------------------------
+                if (jsBody.result.action.toString().toUpperCase() == "Order".toString().toUpperCase()){
+        console.log("Save product: " + JSON.stringify(jsBody.result.parameters.product));
+                order.product.push(JSON.stringify(jsBody.result.parameters.product));
+                order.table = JSON.stringify(jsBody.result.parameters.table);
+                console.log("Order: " + JSON.stringify(order));
         }
-}
-speech += "What kind of " + jsBody.result.parameters.Type.toString().toLowerCase() + " want?";
-        var text = speech;
-//                        speech = "Here's your menu.";
-        var content = {'speech': speech,
-                'displayText': text,
-                'data': row,
-                'contextOut': [
-                {'name': "menuWatched", 'lifespan': 1
-                }
-                ], 'source': "Thien Tu", 'followupEvent': {
+        if (jsBody.result.action.toString().toUpperCase() == "".toString().toUpperCase()){
+                order = {};
+                console.log("Order: " + JSON.stringify(order));
+                order = {};
         }
-        };
-        response.write(JSON.stringify(content));
-        console.log("Send response: " + JSON.stringify(content));
-        response.end();
-        }).catch(function (error) {
-if (error)throw error;
-        }); } else {
-}
-});
-        }
-}
-if (jsBody.result.action.toString().toUpperCase() === "finish".toString().toUpperCase()) {
-db.many(SELECT_ALL_DETAIL_QUERY).then(function (row) {
-for (var product in row) {
-if (product.name.toString().include()) {
-
-}
-}
-});
-        }
-if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpperCase()) {
-
-}
-});
+        /*
+         if (jsBody.result.parameters.Type !== "") {
+         db.one(SELECT_PRODUCT_TYPE_QUERY + " where name LIKE ${name}", {name: jsBody.result.parameters.Type}).then(function (data) {
+         var id = data.id;
+         if (id !== null) {
+         db.many(SELECT_DETAIL_PRODUCT_TYPE_QUERY + " where product_type_id=${id} ", {id: id}).then(function (row) {
+         console.log("row:" + row);
+         var display = "";
+         var speech = "We have \\n";
+         for (var i = 0; i < row.length; i++) {
+         if (i == (row[i].length - 1)) {
+         speech += "And " + row.name + " \\n";
+         } else speech += row[i].name + " \\n";
+         }
+         speech += "What kind of " + jsBody.result.parameters.Type.toString().toLowerCase() + " want?";
+         var text = speech;
+         var content = {'speech': speech,
+         'displayText': text,
+         'data': row,
+         'contextOut': [
+         {'name': "menuWatched", 'lifespan': 1}]};
+         response.write(JSON.stringify(content));
+         console.log("Send response: " + JSON.stringify(content));
+         response.end();
+         }).catch(function (error) {
+         if (error)throw error;
+         });
+         }}).catch(function (error) {
+         if (error)throw error;
+         });
+         }
+         */
+        });
 //---------------------Handle get request --------------------------
         app.get('/', function (request, response) {
-
         console.log("Connecting to DB.........");
                 /*
                  db.tx(function(t){
@@ -150,9 +143,6 @@ if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpper
                  console.log(error);
                  });
                  */
-
-
-
                 db.many(SELECT_RECEIPT_BY_ID_QUERY, {id:1}).then(function (rows){
         response.writeHeader(200, {'Content-type': "text/html"});
                 response.write("<meta charset='UTF-8'>");
@@ -165,7 +155,7 @@ if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpper
                 response.write("<th>Price</th>");
                 response.write("</tr>");
                 var total = 0;
-                for (var i=0;i<rows.length;i++){
+                for (var i = 0; i < rows.length; i++){
         response.write("<tr>");
                 response.write("<td>" + rows[i].name + "</td>");
                 response.write("<td>" + rows[i].amount + "</td>");
@@ -173,53 +163,37 @@ if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpper
                 response.write("</tr>");
                 total += rows[i].amount * rows[i].price;
         }
-        response.write("<h2>Total" + total + "</h1>");
-                response.write("</table>");
+        response.write("</table>");
+                response.write("<h2>Total" + total + "</h1>");
         }).catch(function (error){
         console.log(error);
-        });
-                /*
-                 db.many("SELECT table_schema,table_name FROM information_schema.tables ORDER BY table_schema,table_name").then(function (data){
-                 for (var row in data){
-                 console.log(row.table_name); }
-                 }).catch(function (error){
-                 console.log(error);
-                 });
-                 //                 */
-                /*
-                 //                 ---------------Create Table
-                 var content = "";
-                 db.tx(function (t) {
-                 var queries = [
-                 t.none('Drop Table IF EXISTS tbl_Receipt'),
-                 t.none('Drop sequence IF EXISTs tbl_Receipt_id_seq'),
-                 t.none('Create sequence tbl_Receipt_id_seq'),
-                 t.none("create table tbl_Receipt(ID integer NOT NULL DEFAULT nextval('tbl_Receipt_id_seq'::regclass),date date NOT NULL,time time NOT NULL,PRIMARY KEY(ID))"),
-                 t.none('ALTER TABLE public.tbl_Receipt OWNER TO dxyktuemezuqst; GRANT ALL ON TABLE public.tbl_Receipt TO public; GRANT ALL ON TABLE public.tbl_Receipt TO dxyktuemezuqst;'),
-                 t.none("drop table IF EXISTs tbl_ReceiptProduct"),
-                 t.none("create table tbl_ReceiptProduct(receiptID integer NOT NULL ,productID integer NOT NULL,amount integer not null)"),
-                 ];
-                 return t.batch(queries);
-                 }).then(function(data){console.log(data)}).catch(function(error){
-                 console.log(error);
-                 });
-                 */
-//    db.many(SELECT_ALL_DETAIL_QUERY).then(function (row) {
-//        var productType = [];
-//        for (var i = 0; i < row.length; i++) {
-//            productType.push({"name": row[i].name.toString()});
-//        }
-//        for (var j = 0; j < productType.length; j++) {
-//            content += productType[j].name + '\n';
-//        }
-//        response.writeHeader(200, {'Content-type': "text/html"});
-//        response.write("Result: \n" + content);
-//        response.end();
-//    }).catch(function (error) {
-//        if (error)
-//            throw error;
-//    });
-        });
+        }); });
+        /*
+         db.many("SELECT table_schema,table_name FROM information_schema.tables ORDER BY table_schema,table_name").then(function (data){
+         for (var row in data){
+         console.log(row.table_name); }
+         }).catch(function (error){
+         console.log(error);
+         });
+         //                 */
+        /*
+         //                 ---------------Create Table
+         var content = "";
+         db.tx(function (t) {
+         var queries = [
+         t.none('Drop Table IF EXISTS tbl_Receipt'),
+         t.none('Drop sequence IF EXISTs tbl_Receipt_id_seq'),
+         t.none('Create sequence tbl_Receipt_id_seq'),
+         t.none("create table tbl_Receipt(ID integer NOT NULL DEFAULT nextval('tbl_Receipt_id_seq'::regclass),date date NOT NULL,time time NOT NULL,PRIMARY KEY(ID))"),
+         t.none('ALTER TABLE public.tbl_Receipt OWNER TO dxyktuemezuqst; GRANT ALL ON TABLE public.tbl_Receipt TO public; GRANT ALL ON TABLE public.tbl_Receipt TO dxyktuemezuqst;'),
+         t.none("drop table IF EXISTs tbl_ReceiptProduct"),
+         t.none("create table tbl_ReceiptProduct(receiptID integer NOT NULL ,productID integer NOT NULL,amount integer not null)"),
+         ];
+         return t.batch(queries);
+         }).then(function(data){console.log(data)}).catch(function(error){
+         console.log(error);
+         });
+         */
 //----------------------Post Server----------------------------------
         var server = app.listen(process.env.PORT || 8080, function () {
         console.log('listening on ' + server.address().port);
