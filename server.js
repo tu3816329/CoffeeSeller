@@ -175,7 +175,7 @@ if (jsBody.result.action.toString().toUpperCase() === "order".toString().toUpper
                  }).catch(function (error){
                  console.log(error);
                  });
-                 */
+//                 */
                 /*
                  db.many("SELECT table_schema,table_name FROM information_schema.tables ORDER BY table_schema,table_name").then(function (data){
                  for (var row in data){
