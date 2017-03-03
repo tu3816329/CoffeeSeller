@@ -176,23 +176,24 @@ var users = [
                  console.log(error);
                  });
                  */
-                db.tx(function(t)){
+                db.tx(function(t){
         var queries = [
-                t.none("create table tbl_User(id int,name varchar(30),PRIMARY KEY (ID))");
-                t.none("alter table tbl_product rename column price to unit_price");
-                t.none("alter table tbl_product rename column imagelink to image_url");
-                t.none("alter table tbl_detailproducttype rename to tbl_ProductTypeDetails");
-                t.none("alter table tbl_receipt rename to tbl_Order");
-                t.none("alter table tbl_order add column user_id int");
-                t.none("alter table tbl_order add column status varchar(20)");
-                t.none("DROP table tbl_receiptproduct");
-                t.none("create table tbl_orderItem(order_id int,product_id int,amount int)");
-                t.none("create table tbl_ShoppingCart(order_id int,user_id int)");
-        ]; return t.batch(queries);
+                t.none("create table tbl_User(id int,name varchar(30),PRIMARY KEY (ID))"),
+                t.none("alter table tbl_product rename column price to unit_price"),
+                t.none("alter table tbl_product rename column imagelink to image_url"),
+                t.none("alter table tbl_detailproducttype rename to tbl_ProductTypeDetails"),
+                t.none("alter table tbl_receipt rename to tbl_Order"),
+                t.none("alter table tbl_order add column user_id int"),
+                t.none("alter table tbl_order add column status varchar(20)"),
+                t.none("DROP table tbl_receiptproduct"),
+                t.none("create table tbl_orderItem(order_id int,product_id int,amount int)"),
+                t.none("create table tbl_ShoppingCart(order_id int,user_id int)")
+        ]; 
+        return t.batch(queries);
         }).then(function(data){console.log(data)}).catch(function(error){
         console.log(error);
         });
-        }
+        
         db.many(SELECT_ORDER_BY_ID_QUERY, {id:1}).then(function (rows){
         response.writeHeader(200, {'Content-type': "text/html"});
                 response.write("<meta charset='UTF-8'>");
