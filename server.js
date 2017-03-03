@@ -19,9 +19,9 @@ a.Type_Name as type,a.price from tbl_producttype b, ( select \n\
 a.name,a.price,b.name as Type_Name,b.product_type_id from tbl_product \n\
 a inner join tbl_detailproducttype b  ON a.type_id=b.id where a.price=${price} )\n\
  a where a.product_type_id=b.id ";
-        var SELECT_RECEIPT_BY_ID_QUERY = "Select b.id as Receipt_ID,a.name,a.price,\n\
-c.amount,b.date,b.time from tbl_Product a ,tbl_Receipt b,tbl_ReceiptProduct c\n\
- where c.ReceiptID=b.ID and c.productID=a.ID and c.ReceiptID=${id}";
+        var SELECT_ORDER_BY_ID_QUERY = "Select b.id as Receipt_ID,a.name,a.price,\n\
+c.amount,b.date,b.time from tbl_Product a ,tbl_Order b,tbl_OrderItem c\n\
+ where c.order_id=b.ID and c.productID=a.ID and c.order_id=${id}";
         var SELECT_PRODUCT_TYPE_QUERY = "Select * From tbl_ProductType";
         var SELECT_DETAIL_PRODUCT_TYPE_QUERY = "Select name From tbl_DetailProductType";
 //-----------------------------------------------------------------------------
@@ -48,10 +48,10 @@ c.amount,b.date,b.time from tbl_Product a ,tbl_Receipt b,tbl_ReceiptProduct c\n\
                 ssl: true,
                 poolSize: 25
         };
-        var db = pgPromise(conConfig);
+//        var db = pgPromise(conConfig);
 //-------------Connection Config For Offline DB------------------------
         var conString = "postgres://postgres:tu3816329@localhost:5432" + "/CoffeeShop";
-//        var db = pgPromise(conString);
+        var db = pgPromise(conString);
 //------------------------------------------------------------------
         module.exports = db;
         module.exports = pgPromise;
@@ -75,24 +75,57 @@ var date = new Date();
         return hours + ":" + minute + ":" + seconds + (date.getHours() <= 12 ? " AM" : " PM");
 }
 //------------------Handle Post Request--------------------------------------
-var order = {'product':[], 'table':{}};
+var users = [
+{
+'ip':{},
+        'order':{
+        'product':[],
+                'table':{}
+        }
+}
+];
         app.post('/webhook', function (request, response) {
-    console.log("IP:"+request.connection.remoteAddress);
         var jsBody = request.body;
                 response.writeHeader(200, {'Content-type': "Application/json"});
-                
+                var user = {
+                'ip':{},
+                        'order':{
+                        'product':[],
+                                'table':{}
+                        }
+                }
+        var index = users.length - 1;
+                var existed = false;
                 var content = "";
-                //----------------------Handle Show Menu Request-------------------------
-                if (jsBody.result.action.toString().toUpperCase() == "Order".toString().toUpperCase()){
-        console.log("Save product: " + JSON.stringify(jsBody.result.parameters.product));
-                order.product.push(JSON.stringify(jsBody.result.parameters.product));
-                order.table = JSON.stringify(jsBody.result.parameters.table);
-                console.log("Order: " + JSON.stringify(order));
+                for (var i = 0; i < users.length; i++){
+        if (users[i].ip === request.connection.remoteAddress){
+        existed = true;
+                index = i;
         }
-        if (jsBody.result.action.toString().toUpperCase() == "".toString().toUpperCase()){
-                order = {};
-                console.log("Order: " + JSON.stringify(order));
-                order = {};
+        }
+        if (jsBody.result.action.toString().toUpperCase() == "Order".toString().toUpperCase()){
+        for (var i = 0; i < jsBody.result.parameters.product.length; i++){
+        var pro = jsBody.result.parameters.product[i];
+                if (pro.Amount == null){
+        pro.Amount = 1;
+        }
+        user.order.product.push(pro);
+        }
+        user.order.table = jsBody.result.parameters.table;
+                console.log("Product: " + JSON.stringify(user.order.product));
+                console.log("Table:" + user.order.table.number);
+                user.ip = request.connection.remoteAddress;
+                if (existed === false) {
+        users.push(user);
+        } else{
+        users[index] = user;
+        }
+        }
+        if (jsBody.result.metadata.intentName.toString().toUpperCase() == "finish_order".toString().toUpperCase()){
+//        order = {};
+        console.log("IP: " + users[index].ip + "-" + request.connection.remoteAddress);
+                console.log("Order: " + JSON.stringify(users[index].order));
+                users.splice(index, 1);
         }
         /*
          if (jsBody.result.parameters.Type !== "") {
@@ -143,7 +176,24 @@ var order = {'product':[], 'table':{}};
                  console.log(error);
                  });
                  */
-                db.many(SELECT_RECEIPT_BY_ID_QUERY, {id:1}).then(function (rows){
+                db.tx(function(t)){
+        var queries = [
+                t.none("create table tbl_User(id int,name varchar(30),PRIMARY KEY (ID))");
+                t.none("alter table tbl_product rename column price to unit_price");
+                t.none("alter table tbl_product rename column imagelink to image_url");
+                t.none("alter table tbl_detailproducttype rename to tbl_ProductTypeDetails");
+                t.none("alter table tbl_receipt rename to tbl_Order");
+                t.none("alter table tbl_order add column user_id int");
+                t.none("alter table tbl_order add column status varchar(20)");
+                t.none("DROP table tbl_receiptproduct");
+                t.none("create table tbl_orderItem(order_id int,product_id int,amount int)");
+                t.none("create table tbl_ShoppingCart(order_id int,user_id int)");
+        ]; return t.batch(queries);
+        }).then(function(data){console.log(data)}).catch(function(error){
+        console.log(error);
+        });
+        }
+        db.many(SELECT_ORDER_BY_ID_QUERY, {id:1}).then(function (rows){
         response.writeHeader(200, {'Content-type': "text/html"});
                 response.write("<meta charset='UTF-8'>");
                 response.write("<h1>Receipt No." + rows[0].receipt_id + "</h1>");
