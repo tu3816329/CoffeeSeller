@@ -8,11 +8,17 @@
 //var pg = require('pg');
 //app.set('port', process.env.PORT || 3000);
 //------------------------------------------------
+//var SELECT_BY_PRODUCT_NAME_QUERY
 var SELECT_BY_PRICE_QUERY = "select b.name as Product,a.name,\n\
 a.Type_Name as type,a.price from tbl_producttype b, ( select \n\
 a.name,a.unit_price,b.name as Type_Name,b.product_type_id from tbl_product \n\
 a inner join tbl_detailproducttype b  ON a.type_id=b.id where a.price=${price} )\n\
  a where a.product_type_id=b.id ";
+var SELECT_ORDER_BY_ID_QUERY = "Select b.id as Receipt_ID,a.name,a.unit_price as price,\n\
+c.amount,b.date,b.time from tbl_Product a ,tbl_Order b,tbl_OrderItem c\n\
+ where c.order_id=b.ID and c.productID=a.ID and c.order_id=${id}";
+var SELECT_PRODUCT_TYPE_QUERY = "Select * From tbl_ProductType";
+var SELECT_DETAIL_PRODUCT_TYPE_QUERY = "Select name From tbl_DetailProductType";
 //-----------------------------------------------------------------------------
 var http = require('http');
 var url = require('url');
