@@ -177,47 +177,50 @@ var users = [
                  });
                  */
                 db.tx(function(t){
-        var queries = [
-                t.none("create table tbl_User(id int,name varchar(30),PRIMARY KEY (ID))"),
-                t.none("alter table tbl_product rename column price to unit_price"),
-                t.none("alter table tbl_product rename column imagelink to image_url"),
-                t.none("alter table tbl_detailproducttype rename to tbl_ProductTypeDetails"),
-                t.none("alter table tbl_receipt rename to tbl_Order"),
-                t.none("alter table tbl_order add column user_id int"),
-                t.none("alter table tbl_order add column status varchar(20)"),
-                t.none("DROP table tbl_receiptproduct"),
-                t.none("create table tbl_orderItem(order_id int,product_id int,amount int)"),
-                t.none("create table tbl_ShoppingCart(order_id int,user_id int)")
-        ]; 
-        return t.batch(queries);
-        }).then(function(data){console.log(data)}).catch(function(error){
+                var queries = [
+                        t.none("create table tbl_User(id int,name varchar(30),PRIMARY KEY (ID))"),
+                        t.none("alter table tbl_product rename column price to unit_price"),
+                        t.none("alter table tbl_product rename column imagelink to image_url"),
+                        t.none("alter table tbl_detailproducttype rename to tbl_ProductTypeDetails"),
+                        t.none("alter table tbl_receipt rename to tbl_Order"),
+                        t.none("alter table tbl_order add column user_id int"),
+                        t.none("alter table tbl_order add column status varchar(20)"),
+                        t.none("DROP table tbl_receiptproduct"),
+                        t.none("create table tbl_orderItem(order_id int,product_id int,amount int)"),
+                        t.none("create table tbl_ShoppingCart(order_id int,user_id int)")
+                ];
+                        return t.batch(queries);
+                }).then(function(data){console.log(data)}).catch(function(error){
         console.log(error);
         });
-        
-        db.many(SELECT_ORDER_BY_ID_QUERY, {id:1}).then(function (rows){
-        response.writeHeader(200, {'Content-type': "text/html"});
+                response.writeHeader(200, {'Content-type': "text/html"});
                 response.write("<meta charset='UTF-8'>");
-                response.write("<h1>Receipt No." + rows[0].receipt_id + "</h1>");
-                response.write("<h2>" + rows[0].time + "_" + rows[0].date + "</h1>");
-                response.write("<table>");
-                response.write("<tr>");
-                response.write("<th>Name</th>");
-                response.write("<th>Amount</th>");
-                response.write("<th>Price</th>");
-                response.write("</tr>");
-                var total = 0;
-                for (var i = 0; i < rows.length; i++){
-        response.write("<tr>");
-                response.write("<td>" + rows[i].name + "</td>");
-                response.write("<td>" + rows[i].amount + "</td>");
-                response.write("<td>" + rows[i].price + "</td>");
-                response.write("</tr>");
-                total += rows[i].amount * rows[i].price;
-        }
-        response.write("</table>");
-                response.write("<h2>Total" + total + "</h1>");
+                response.write("<h1>Receipt No." + 1 + "</h1>");
+                /*
+                 db.many(SELECT_ORDER_BY_ID_QUERY, {id:1}).then(function (rows){
+                 response.writeHeader(200, {'Content-type': "text/html"});
+                 response.write("<meta charset='UTF-8'>");
+                 response.write("<h2>" + rows[0].time + "_" + rows[0].date + "</h1>");
+                 response.write("<table>");
+                 response.write("<tr>");
+                 response.write("<th>Name</th>");
+                 response.write("<th>Amount</th>");
+                 response.write("<th>Price</th>");
+                 response.write("</tr>");
+                 var total = 0;
+                 for (var i = 0; i < rows.length; i++){
+                 response.write("<tr>");
+                 response.write("<td>" + rows[i].name + "</td>");
+                 response.write("<td>" + rows[i].amount + "</td>");
+                 response.write("<td>" + rows[i].price + "</td>");
+                 response.write("</tr>");
+                 total += rows[i].amount * rows[i].price;
+                 }
+                 response.write("</table>");
+                 response.write("<h2>Total" + total + "</h1>");
+                 */
         }).catch(function (error){
-        console.log(error);
+console.log(error);
         }); });
         /*
          db.many("SELECT table_schema,table_name FROM information_schema.tables ORDER BY table_schema,table_name").then(function (data){
