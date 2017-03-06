@@ -48,10 +48,10 @@ c.amount,b.date,b.time from tbl_Product a ,tbl_Order b,tbl_OrderItem c\n\
                 ssl: true,
                 poolSize: 25
         };
-//        var db = pgPromise(conConfig);
+        var db = pgPromise(conConfig);
 //-------------Connection Config For Offline DB------------------------
         var conString = "postgres://postgres:tu3816329@localhost:5432" + "/CoffeeShop";
-        var db = pgPromise(conString);
+//        var db = pgPromise(conString);
 //------------------------------------------------------------------
         module.exports = db;
         module.exports = pgPromise;
