@@ -219,9 +219,10 @@ var users = [
                  response.write("</table>");
                  response.write("<h2>Total" + total + "</h1>");
                  */
-        }).catch(function (error){
-console.log(error);
-        }); });
+//        }).catch(function (error){
+//console.log(error);
+//        }); 
+        });
         /*
          db.many("SELECT table_schema,table_name FROM information_schema.tables ORDER BY table_schema,table_name").then(function (data){
          for (var row in data){
