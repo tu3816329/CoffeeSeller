@@ -16,7 +16,7 @@ a inner join tbl_detailproducttype b  ON a.type_id=b.id where a.price=${price} )
  a where a.product_type_id=b.id ";
 var SELECT_ORDER_BY_ID_QUERY = "Select b.id as Receipt_ID,a.name,a.unit_price as price,\n\
 c.amount,b.date,b.time from tbl_Product a ,tbl_Order b,tbl_OrderItem c\n\
- where c.order_id=b.ID and c.productID=a.ID and c.order_id=${id}";
+ where c.order_id=b.ID and c.product_ID=a.ID and c.order_id=${id}";
 var SELECT_PRODUCT_TYPE_QUERY = "Select * From tbl_ProductType";
 var SELECT_DETAIL_PRODUCT_TYPE_QUERY = "Select name From tbl_DetailProductType";
 //-----------------------------------------------------------------------------
